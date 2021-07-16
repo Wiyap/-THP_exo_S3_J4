@@ -4,6 +4,7 @@ require 'rest-client'
 require 'nokogiri'
 require 'open-uri'
 
+#Prends tout les cours de crypto et les attributs a leur symbole
 
 def get_all_page_names
   crypto_names_array = []
@@ -32,6 +33,4 @@ def get_all_page_names
   return combined
 end
 
-
 p get_all_page_names
-puts get_all_page_names.length

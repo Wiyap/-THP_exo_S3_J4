@@ -3,6 +3,12 @@ require 'pry'
 require 'rest-client'
 require 'nokogiri'
 require 'open-uri'
+require 'pp'
+
+depute_first_name = []
+depute_last_name = []
+
+#Sélectionne les mails
 
 def find_mail(arr)
   i = []
@@ -15,8 +21,9 @@ def find_mail(arr)
   end
   return i.uniq
 end
-depute_first_name = []
-depute_last_name = []
+
+
+#Sélectionne et sépare nom/prénom
 
 def depute_names (depute_first_name, depute_last_name)
   page = Nokogiri::HTML(URI.open("https://www2.assemblee-nationale.fr/deputes/liste/alphabetique"))
@@ -36,6 +43,8 @@ def depute_names (depute_first_name, depute_last_name)
   return depute_first_name
 end
 
+#Créer une array de sites
+
 def depute_sites
   page = Nokogiri::HTML(URI.open("https://www2.assemblee-nationale.fr/deputes/liste/alphabetique"))
   depute_sites = []
@@ -48,6 +57,7 @@ def depute_sites
   return depute_sites
 end
 
+#Sélectionne les mails
 
 def depute_mail
   depute_mail = []
@@ -60,25 +70,35 @@ def depute_mail
       h << node.text
     end
 
-    depute_mail << find_mail(h)
+    p find_mail(h)
 
+    depute_mail << find_mail(h)
   end
   return depute_mail
 end
 
-depute_names(depute_first_name, depute_last_name)
+# Créer la hash final
 
-depute_mail_final = depute_mail
+def all_merged  (depute_first_name, depute_last_name)
+  depute_names(depute_first_name, depute_last_name)
 
-all_merged = []
+  depute_mail_final = depute_mail
 
-(depute_first_name.length).times do |i|
-  all = {}
-  all["Prénom"] = depute_first_name[i]
-  all["Nom"] = depute_last_name[i]
-  all["Email"] = depute_mail_final[i][0]
-  all_merged << all
+  all_merged = []
+
+  (depute_first_name.length).times do |i|
+    all = {}
+
+    all["Prénom"] = depute_first_name[i]
+    all["Nom"] = depute_last_name[i]
+    all["Email"] = depute_mail_final[i][0]
+
+    all_merged << all
+  end
+  return all_merged
 end
 
-p all_merged
-puts all_merged.length
+a = all_merged(depute_first_name, depute_last_name)
+
+p a
+puts (a.length)
